@@ -9,12 +9,13 @@
 
 ### 1.2 Current Status
 
-- Baseline pipeline is implemented in a notebook.
+- Baseline pipeline is implemented in [notebooks/apache_spam_classifier.ipynb](notebooks/apache_spam_classifier.ipynb).
 - Models tested: Logistic Regression, linear SVM, and Random Forest.
 - Basic evaluation is included (classification report + confusion matrix).
 - Duplicate email files are removed before the split to reduce leakage risk.
 - Dataset imbalance is observed but not yet addressed.
-- A custom preprocessing pipeline is planned, but it is not implemented yet.
+- The notebook now has helper functions for file inspection and train/test file collection.
+- Email preprocessing is still exploratory: the current baseline strips headers with a blank-line split, and `email`-module parsing is being investigated.
 - Codebase refactoring/modularization is not yet done (currently notebook-centric).
 
 ### 1.3 Scope and Non-Goals (Current Phase)
@@ -26,11 +27,12 @@
 
 ```text
 .
-├── apache_spam_classifier.ipynb   # End-to-end experimentation notebook
+├── notebooks/
+│   └── apache_spam_classifier.ipynb   # End-to-end experimentation notebook
 ├── README.md                      # Project documentation
 ├── requirements.txt               # Python dependencies
-├── raw_data/                          # Extracted SpamAssassin corpus files
-└── data_split/                    # Train/test split generated from data/
+├── raw_data/                      # Extracted SpamAssassin corpus files
+└── data_split/                    # Train/test split generated from raw_data/
 		├── train/
 		├── test/
 		└── val/ (currently unused in split ratio)
@@ -77,9 +79,10 @@
 
 ### 4.4 Preprocessing Strategy
 
-- Candidate preprocessing (header stripping, URL/number replacement, stemming-like trimming) was moved below the split in the notebook plan.
-- The custom preprocessing function is still in progress and has not been implemented yet.
-- For now, the notebook only contains a commented outline of the intended preprocessing steps.
+- Candidate preprocessing still includes header stripping, URL/number replacement, and stemming-like trimming.
+- The current baseline preprocessing function strips headers by splitting on the first blank line and lowercasing the body.
+- The notebook also includes a short `email`-module experiment to inspect `Subject`, `From`, and body parsing.
+- A more robust MIME-aware preprocessing function is still in progress.
 
 ### 4.5 Train/Test Split
 
@@ -135,7 +138,7 @@ pip install -r requirements.txt
 
 1. Open the notebook.
 2. Run cells in order from data download through evaluation.
-3. Verify generated `data/` and `data_split/` folders.
+3. Verify generated `raw_data/` and `data_split/` folders.
 
 ### 6.3 Reproducibility Notes
 
@@ -150,7 +153,7 @@ pip install -r requirements.txt
 - Notebook workflow is not modularized into reusable scripts/packages.
 - Limited experiment tracking (no formal run registry).
 - Duplicate files are removed, but the broader leakage audit is still informal.
-- The custom preprocessing pipeline is still pending implementation.
+- The custom preprocessing pipeline is still partially implemented and needs a more robust email-header parser.
 
 ## 8. Roadmap
 
@@ -247,8 +250,14 @@ pip install -r requirements.txt
 
 - `2026-07-11`: Added duplicate email file removal before splitting to reduce leakage risk.
 - `2026-07-11`: Moved the planned preprocessing steps below the split and kept the custom preprocessing function as work in progress.
+- `2026-07-18`: Refined the notebook workflow with helper functions for file discovery/splitting and added exploratory `email`-module parsing.
+- `2026-07-18`: Updated preprocessing notes to reflect the current baseline header-stripping logic and the remaining MIME-aware parsing work.
 
 ## 10. Acknowledgements and References
 
 - Apache SpamAssassin corpus maintainers.
 - scikit-learn documentation.
+
+## 11. AI Statement
+
+AI was used for documentation.
