@@ -10,12 +10,12 @@
 ### 1.2 Current Status
 
 - Baseline pipeline is implemented in [notebooks/apache_spam_classifier.ipynb](notebooks/apache_spam_classifier.ipynb).
-- Models tested: Logistic Regression, linear SVM, and Random Forest.
+- Model search is wired up in the notebook with a `Pipeline` + `GridSearchCV` setup over Logistic Regression, Linear SVC, Multinomial NB, Complement NB, SGD, and Passive Aggressive; the Logistic Regression tuning run is still in progress.
 - Basic evaluation is included (classification report + confusion matrix).
 - Duplicate email files are removed before the split to reduce leakage risk.
 - Dataset imbalance is observed but not yet addressed.
-- The notebook now has helper functions for file inspection and train/test file collection.
-- Email preprocessing is still exploratory: the current baseline strips headers with a blank-line split, and `email`-module parsing is being investigated.
+- The notebook now has helper functions for file inspection, train/test file collection, and folder-wise split handling.
+- Email preprocessing is still exploratory: the current baseline strips headers with a blank-line split, and `email`-module parsing is being investigated for a more MIME-aware approach.
 - Codebase refactoring/modularization is not yet done (currently notebook-centric).
 
 ### 1.3 Scope and Non-Goals (Current Phase)
@@ -82,7 +82,7 @@
 - Candidate preprocessing still includes header stripping, URL/number replacement, and stemming-like trimming.
 - The current baseline preprocessing function strips headers by splitting on the first blank line and lowercasing the body.
 - The notebook also includes a short `email`-module experiment to inspect `Subject`, `From`, and body parsing.
-- A more robust MIME-aware preprocessing function is still in progress.
+- A more robust MIME-aware preprocessing function is still in progress and will replace the blank-line split once it is stable.
 
 ### 4.5 Train/Test Split
 
@@ -149,11 +149,12 @@ pip install -r requirements.txt
 ## 7. Known Limitations
 
 - Dataset imbalance exists and is not yet addressed with class weighting/resampling/threshold tuning.
-- No dedicated validation-driven model selection pipeline yet.
+- No dedicated held-out validation workflow yet; current tuning relies on cross-validation inside the training split.
 - Notebook workflow is not modularized into reusable scripts/packages.
 - Limited experiment tracking (no formal run registry).
 - Duplicate files are removed, but the broader leakage audit is still informal.
 - The custom preprocessing pipeline is still partially implemented and needs a more robust email-header parser.
+- The current grid-search setup still needs cleanup for invalid parameter combinations and model-specific warnings.
 
 ## 8. Roadmap
 
@@ -165,7 +166,8 @@ pip install -r requirements.txt
 	- threshold optimization.
 - Add validation split usage and model comparison protocol.
 - Add consistent metric reporting utility.
-- Move modeling into a `sklearn.pipeline.Pipeline` and add cross-validation with `scoring='f1'`.
+- Keep the model-search notebook section aligned with the baseline evaluation results once the Logistic Regression grid search completes.
+- Refine the existing `sklearn.pipeline.Pipeline` + `GridSearchCV` setup, including parameter validity and the scoring choice used for tuning.
 - Run `GridSearchCV` with at least these parameters:
 	- `tfidf__max_features`,
 	- `tfidf__ngram_range`,
@@ -252,6 +254,8 @@ pip install -r requirements.txt
 - `2026-07-11`: Moved the planned preprocessing steps below the split and kept the custom preprocessing function as work in progress.
 - `2026-07-18`: Refined the notebook workflow with helper functions for file discovery/splitting and added exploratory `email`-module parsing.
 - `2026-07-18`: Updated preprocessing notes to reflect the current baseline header-stripping logic and the remaining MIME-aware parsing work.
+- `2026-07-18`: Added `GridSearchCV`-based model-search scaffolding for the baseline classifiers; Logistic Regression tuning is still running.
+- `2026-07-19`: Expanded the notebook model search into a `Pipeline` + `GridSearchCV` workflow with multiple baseline classifiers and updated the README to match the current preprocessing and tuning status.
 
 ## 10. Acknowledgements and References
 
