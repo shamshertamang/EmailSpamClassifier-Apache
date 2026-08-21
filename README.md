@@ -256,6 +256,9 @@ pip install -r requirements.txt
 - `2026-07-18`: Updated preprocessing notes to reflect the current baseline header-stripping logic and the remaining MIME-aware parsing work.
 - `2026-07-18`: Added `GridSearchCV`-based model-search scaffolding for the baseline classifiers; Logistic Regression tuning is still running.
 - `2026-07-19`: Expanded the notebook model search into a `Pipeline` + `GridSearchCV` workflow with multiple baseline classifiers and updated the README to match the current preprocessing and tuning status.
+- `2026-08-16`: Working on Email flags hiding.
+- `2026-08-20`: Narrowed scope of the project to focus just on data science aspect. Translated the generic notebook into `01_eda.ipynb`, `02_data_cleaning.ipynb`, etc.
+- `2026-08-21`: finished with `01_initial_eda.ipynb`.
 
 ## 10. Acknowledgements and References
 
