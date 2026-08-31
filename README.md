@@ -259,6 +259,7 @@ pip install -r requirements.txt
 - `2026-08-16`: Working on Email flags hiding.
 - `2026-08-20`: Narrowed scope of the project to focus just on data science aspect. Translated the generic notebook into `01_eda.ipynb`, `02_data_cleaning.ipynb`, etc.
 - `2026-08-21`: finished with `01_initial_eda.ipynb`.
+- `2026-08-24`: finished with `02_data_cleaning_and_eda.ipynb`.
 
 ## 10. Acknowledgements and References
 

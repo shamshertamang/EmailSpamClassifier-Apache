@@ -4,6 +4,8 @@ import tarfile
 import subprocess
 import os
 import pandas as pd
+import random
+import splitfolders
 
 
 def setup_spam_corpus(raw_data_dir: Path, force_download: bool = False):
@@ -72,6 +74,9 @@ def setup_spam_corpus(raw_data_dir: Path, force_download: bool = False):
 
 
 def inspect_file(folder_name, file_type, raw_data_dir: Path):
+    """
+    Displays the content of a sample file from the specified folder.
+    """
     sample_filename = os.listdir(raw_data_dir / folder_name)[0]
     sample_file = raw_data_dir / folder_name / sample_filename
     with open(sample_file, 'r', encoding='latin-1') as f:
@@ -80,7 +85,12 @@ def inspect_file(folder_name, file_type, raw_data_dir: Path):
     print(text)
 
 
-def detect_duplicates(raw_data_dir: Path):
+def detect_duplicates(raw_data_dir: Path, remove_duplicates: bool = False):
+    """
+    Detects duplicate emails in the raw data directory.
+    If remove_duplicates is True, it will delete the duplicate files.
+    Returns a set of duplicate emails and the count of duplicates found.
+    """
     seen_emails = set()
     duplicate_emails = set()
     number_of_duplicates = 0
@@ -95,6 +105,8 @@ def detect_duplicates(raw_data_dir: Path):
                 if text in seen_emails:
                     number_of_duplicates += 1
                     duplicate_emails.add(text)
+                    if remove_duplicates:
+                        os.remove(file)
                 else:
                     seen_emails.add(text)
 
@@ -169,3 +181,46 @@ def get_data_info(raw_data_dir: Path) -> pd.DataFrame:
         "duplicate_emails": total_files_w_duplicates - total_files_w_o_duplicates
     }
     return data_info, msc_info
+
+
+def create_train_test_split(
+    raw_data_dir, data_split_dir, seed=42, 
+    train_ratio=0.8, test_ratio=0.2):
+
+    # create train/test split on folders
+    if os.path.exists(f'{data_split_dir}'):
+        shutil.rmtree(f'{data_split_dir}')
+    splitfolders.ratio(f'{raw_data_dir}', output=f'{data_split_dir}', 
+            seed=seed, ratio=(train_ratio, 0.0, test_ratio), group_prefix=None, shuffle=True)
+
+    # collect file paths for train and test
+    def collect_file_paths(file_type):
+        res = []
+        for folder in Path(data_split_dir / file_type).iterdir():
+            if folder.is_dir():
+                res.extend([f for f in Path(folder).iterdir() if f.is_file()])
+        return res
+
+    train_files = collect_file_paths('train')
+    test_files = collect_file_paths('test')
+
+    # collect train or test file contents and labels
+    def collect_file_contents(file_list, shuffle=True):
+        X = []
+        y = []
+    
+        if shuffle:
+            random.seed(seed)
+            random.shuffle(file_list)
+
+        for f in file_list:
+            with open(f, 'r', encoding='latin-1') as file:
+                text = file.read()
+            X.append(text)
+            y.append(1 if 'spam' in str(f) else 0)
+        return X, y
+
+    X_train, y_train = collect_file_contents(train_files)
+    X_test, y_test = collect_file_contents(test_files)
+
+    return X_train, y_train, X_test, y_test
