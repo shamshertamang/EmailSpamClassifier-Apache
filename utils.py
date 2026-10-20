@@ -6,6 +6,8 @@ import os
 import pandas as pd
 import random
 import splitfolders
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+
 
 
 def setup_spam_corpus(raw_data_dir: Path, force_download: bool = False):
@@ -224,3 +226,58 @@ def create_train_test_split(
     X_test, y_test = collect_file_contents(test_files)
 
     return X_train, y_train, X_test, y_test
+
+
+def clean_emails(emails, remove_headers=True):
+    """
+        Process the email text by removing headers, converting to lowercase
+
+        BASELINE: remove headers from the emails in X
+        ADVANCED: customize the headers
+            - remove X-spam or related subheaders
+            - replace urls with 'URL'
+            - replace numbers with 'NUMBER'
+            - trim word endings
+    """
+    cleaned = []
+    for email in emails:
+        if remove_headers: # remove headers from the email
+            email = email.split('\n\n', 1)[-1]
+        else: # advanced customization here for later
+            pass
+
+        email = email.lower()
+        cleaned.append(email)
+    return cleaned
+
+
+def evaluate_model(name, y_true, y_pred, y_prob):
+    metrics = {
+        "name:": name,
+        "accuracy": accuracy_score(y_true, y_pred),
+        "precision": precision_score(y_true, y_pred),
+        "recall": recall_score(y_true, y_pred),
+        "f1": f1_score(y_true, y_pred),
+        "roc_auc": roc_auc_score(y_true, y_prob)
+    }
+
+    print(f"Evaluation Metrics for {name}:")
+    for k, v in metrics.items():
+        if k != "name:":
+            print(f"{k:<10}: {v:.4f}")
+        
+    return metrics
+
+
+def plot_confusion_matrix(y_true, y_pred, title='Confusion Matrix'):
+    from sklearn.metrics import confusion_matrix
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(6, 4))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Not Spam', 'Spam'], yticklabels=['Not Spam', 'Spam'])
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title(title)
+    plt.show()
