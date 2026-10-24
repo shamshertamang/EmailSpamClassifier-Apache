@@ -253,17 +253,17 @@ def clean_emails(emails, remove_headers=True):
 
 def evaluate_model(name, y_true, y_pred, y_prob):
     metrics = {
-        "name:": name,
-        "accuracy": accuracy_score(y_true, y_pred),
-        "precision": precision_score(y_true, y_pred),
-        "recall": recall_score(y_true, y_pred),
-        "f1": f1_score(y_true, y_pred),
-        "roc_auc": roc_auc_score(y_true, y_prob)
+        "Name": name,
+        "Accuracy": accuracy_score(y_true, y_pred),
+        "Precision": precision_score(y_true, y_pred),
+        "Recall": recall_score(y_true, y_pred),
+        "F1 Score": f1_score(y_true, y_pred),
+        "ROC-AUC": roc_auc_score(y_true, y_prob)
     }
 
     print(f"Evaluation Metrics for {name}:")
     for k, v in metrics.items():
-        if k != "name:":
+        if k != "Name":
             print(f"{k:<10}: {v:.4f}")
         
     return metrics
