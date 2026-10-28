@@ -2,3 +2,8 @@ raw_data/
 data_split/
 .venv/
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+./models/
