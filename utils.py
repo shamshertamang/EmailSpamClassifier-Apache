@@ -6,8 +6,7 @@ import os
 import pandas as pd
 import random
 import splitfolders
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, auc, precision_recall_curve
 
 
 def setup_spam_corpus(raw_data_dir: Path, force_download: bool = False):
@@ -258,7 +257,8 @@ def evaluate_model(name, y_true, y_pred, y_prob):
         "Precision": precision_score(y_true, y_pred),
         "Recall": recall_score(y_true, y_pred),
         "F1 Score": f1_score(y_true, y_pred),
-        "ROC-AUC": roc_auc_score(y_true, y_prob)
+        "PR-AUC": auc(precision_recall_curve(y_true, y_prob)[1], precision_recall_curve(y_true, y_prob)[0]),
+        "ROC-AUC": roc_auc_score(y_true, y_prob)    
     }
 
     print(f"Evaluation Metrics for {name}:")
