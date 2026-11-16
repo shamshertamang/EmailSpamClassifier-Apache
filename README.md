@@ -54,13 +54,13 @@ Spam Classifier/
 
 - Due to the text nature of the dataset, TDIF was used.
 
-- TODO: Discuss the problem of imbalance and why accracy is useless. What metrics were used instead?
+- Our classification problem had only 26.02% SPAM instances which meant, even if a model that always classify to HAM, would still be 73.98% accurate. So accuracy is not a good metric here. It is important to use the precision recall to evaluate the effectiveness and threshold selection.
 
-- TODO: Which model performed the best overall? What model was choosen?
+- SVM, Random Forest and Gradient Boosting all had a very high PR-AUC of 98%. We ended up choosing SVM because it had a higher precision and better performance on F1 score. Although random forest would have been a good compromise for computational reasons.
 
-- TODO: Precision-Recall Trade Off: Which model has a higher precision, does that affect the recall? Vice versa.
+- Random Forest, Gradient Boosting, and SVM demonstrated the highest overall precision–recall performance. Generally, increasing precision comes at the expense of recall and vice versa, depending on the classification threshold. However, our models maintained high precision across a wide range of recall values, demonstrating a favorable trade-off.
 
-- TODO: Training SVM took forever. Dataset sampling could have lowered the dataset making training and inference faster.
+- Training SVM took forever and it was painfully slow. Dataset sampling could have made the training and inference faster. Random Forest could also have been a good compromise for computational and inference benefits.
 
 ## Future Work
 
